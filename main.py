@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[10]:
+# In[16]:
 
 
-#tkinter - standard Python interface to the Tcl/Tk GUI toolkit   
+#tkinter - standard Python interface to the Tcl/Tk GUI toolkit        
 from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
@@ -23,6 +23,7 @@ def password_generator():
     
     #list comprehension
     #choice() - returns a randomly selected element from the specified sequence
+    #_ - returns the value of last executed expression value
     password_letters = [choice(letters) for _ in range(randint(4, 8))]
     password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
     password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
@@ -39,7 +40,7 @@ def password_generator():
 
 #save the password
 def save_password():
-    #get() - returns the value of the item with the specified key.
+    #get() - returns the value of the item with the specified key
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
@@ -49,9 +50,19 @@ def save_password():
     if is_ok:
         with open('password.txt', 'a') as password_file:
             #\n - new line character
-            password_file.write(f'{website}, {email}, {password}\n')
+            password_file.write(f'Website: {website}, Email: {email}, Password: {password}\n')
             website_entry.delete(0, END)
             password_entry.delete(0, END)
+            
+#find password
+def find_password():
+    website = website_entry.get()
+    
+    with open('password.txt') as password_file:
+        if website in password_file:
+            email = password_file[website]['email']
+            password = password_file[website]['password']
+            messagebox.showinfo(title = website, message = f'Password: {password}\n')
 
 #Tk() - allows you to register and unregister a callback function which will be called from the Tk mainloop
 window = Tk()
@@ -74,7 +85,7 @@ password_label = Label(text = 'Password: ')
 password_label.grid(row = 3, column = 0)
 
 website_entry = Entry(width = 35)
-#columnspan - how many columns widgetoccupies; default 1.
+#columnspan - how many columns widgetoccupies; default 1
 website_entry.grid(row = 1, column = 1, columnspan = 2)
 #.focus() - this method returns the name of the widget which currently has the focus
 website_entry.focus()
@@ -88,6 +99,8 @@ password_generator_button = Button(text = 'Generate Password', command = passwor
 password_generator_button.grid(row = 4, column = 1)
 save_password_button = Button(text = 'Save Password', command = save_password)
 save_password_button.grid(row = 5, column = 1)
+find_password_button = Button(text = 'Find Password', command = find_password)
+find_password_button.grid(row = 6, column = 1)  
 
 window.mainloop()
 
